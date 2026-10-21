@@ -1,0 +1,1 @@
+﻿benchmark;IPC;CPI;sim_cycle;sim_num_insn;sim_total_insn;sim_exec_BW;ifq_occupancy;ruu_occupancy;lsq_occupancy;bpred_dir_rate;bpred_addr_rate;bpred_misses;ras_rate;il1_miss_rate;dl1_miss_rate;ul2_miss_rate;itlb_miss_rate;dtlb_miss_rate

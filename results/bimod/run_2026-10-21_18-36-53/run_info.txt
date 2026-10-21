@@ -1,0 +1,7 @@
+timestamp=2026-10-21_18-36-53
+familia=bimod
+fastfwd=100000000
+max_inst=100000000
+mem_width=32
+mem_lat=300 2
+benchmarks=bzip2 ammp gap swim vpr

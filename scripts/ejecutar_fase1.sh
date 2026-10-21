@@ -185,7 +185,7 @@ for FAMILY in "${FAMILY_ORDER[@]}"; do
                 fi
                 BPRM=$(grep -m1 'bpred_.*\.misses ' "$STATS" | awk '{print $2}')
 
-                ROW="$BENCH;$IPC;$CPI;$CYC;$NINS;$TINS;$BW;$IFQO;$RUOO;$LSQO;$BPRD;$BPRA;$BPRM;$RAS;$IL1M;$DL1M;$UL2M;$ITLBM;$DTLBM"
+                ROW="$BENCH;$IPC;$CPI;$CYC;$NINS;$TINS;$BW;$IFQO;$RUUO;$LSQO;$BPRD;$BPRA;$BPRM;$RAS;$IL1M;$DL1M;$UL2M;$ITLBM;$DTLBM"
                 echo "$ROW" >> "$RESUME"
                 echo "  [$BENCH] OK  IPC=$IPC  dir_rate=$BPRD"
                 TOTAL_OK=$((TOTAL_OK+1))

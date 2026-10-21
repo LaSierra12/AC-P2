@@ -1,0 +1,2 @@
+=== bzip2 | pag/Pag_32_256 | 2026-10-21_18-36-53 ===
+Opciones: -bpred 2lev -bpred:2lev 32 256 8 0

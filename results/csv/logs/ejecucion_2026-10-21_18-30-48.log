@@ -1,0 +1,14 @@
+
+================================================================
+ EJECUCIÓN FASE 1 - 2026-10-21_18-30-48
+ Salida raíz : /home/milax/Documents/AC-P2/results
+ Log         : /home/milax/Documents/AC-P2/results/csv/logs/ejecucion_2026-10-21_18-30-48.log
+================================================================
+
+================================================================
+ FAMILIA: estaticos
+================================================================
+
+--- estaticos/taken (taken) ---
+  [bzip2] simulando...
+/home/milax/Documents/AC-P2/scripts/ejecutar_fase1.sh: línia 188: RUOO: variable no definida
