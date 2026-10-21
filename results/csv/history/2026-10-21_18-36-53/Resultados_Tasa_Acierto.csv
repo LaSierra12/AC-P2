@@ -1,5 +1,5 @@
 ﻿Configuracion;Tipo_Predictor;ammp;bzip2;gap;swim;vpr;Media_%Acierto
-nottaken;Estático;1,0000;1,0000;1,0000;1,0000;1,0000;1,0000
+nottaken;Estático;0,8485;0,6196;0,7096;0,6922;0,5878;0,6915
 perfect;Estático;1,0000;1,0000;1,0000;1,0000;1,0000;1,0000
 taken;Estático;0,1515;0,3804;0,2904;0,3078;0,4122;0,3085
 bimod_128;Bimodal;0,9710;0,9495;0,9017;0,9999;0,8635;0,9371

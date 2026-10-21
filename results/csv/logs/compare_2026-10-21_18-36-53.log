@@ -22,3 +22,15 @@ Configs detectadas: 24
    - Resultados_Tasa_Acierto.csv
  Copia histórica: /home/milax/Documents/AC-P2/results/csv/history/2026-10-21_18-36-53/
 ================================================================
+================================================================
+ COMPARE - TIMESTAMP=2026-10-21_18-36-53
+================================================================
+Configs detectadas: 24
+
+================================================================
+ CSVs generados en /home/milax/Documents/AC-P2/results/csv
+   - Resultados_Completos_Fase1.csv
+   - Resultados_IPC.csv
+   - Resultados_Tasa_Acierto.csv
+ Copia histórica: /home/milax/Documents/AC-P2/results/csv/history/2026-10-21_18-36-53/
+================================================================
