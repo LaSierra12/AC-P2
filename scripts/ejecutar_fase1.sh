@@ -206,7 +206,8 @@ for FAMILY in "${FAMILY_ORDER[@]}"; do
                 taken_rate=$(awk -F';' -v b="$bench" '$1==b {print $11}' "$FAMILY_DIR/taken/_resumen.csv")
                 nottaken_rate=$(echo "$rest" | awk -F';' '{print $10}')
                 if [ -n "$taken_rate" ] && [ "$nottaken_rate" = "$taken_rate" ]; then
-                    corrected=$(awk -v t="$taken_rate" 'BEGIN{printf "%.4f", 1 - t}' | tr '.' ',')
+                    t_dot=$(echo "$taken_rate" | tr ',' '.')
+                    corrected=$(awk -v t="$t_dot" 'BEGIN{printf "%.4f", 1 - t}' | tr '.' ',')
                     # Reemplazar col 11 (dir_rate)
                     new_rest=$(echo "$rest" | awk -F';' -v c="$corrected" 'BEGIN{OFS=";"}{$10=c; print}')
                     echo "$bench;$new_rest" >> "$tmp"
