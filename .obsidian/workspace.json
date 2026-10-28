@@ -37,12 +37,14 @@
             "id": "9a0c85a30f4520c8",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "prac2_AC_2627_1C.pdf"
+                "file": "FASE 2.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "prac2_AC_2627_1C"
+              "icon": "lucide-file",
+              "title": "FASE 2"
             }
           }
         ],
@@ -124,7 +126,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "prac2_AC_2627_1C.pdf",
+                "file": "FASE 1.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -143,7 +145,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "prac2_AC_2627_1C.pdf",
+                "file": "FASE 1.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -186,7 +188,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "prac2_AC_2627_1C.pdf",
+                "file": "FASE 1.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -215,17 +217,18 @@
   },
   "active": "9a0c85a30f4520c8",
   "lastOpenFiles": [
+    "apuntes_enunciado.pdf",
+    "prac2_AC_2627_1C.pdf",
+    "esquema.png",
+    "FASE 2.md",
     "FASE 1.md",
     "Tablas_graficas.ods",
     "lu52564eh5c7.tmp",
-    "fase 2.md",
-    "prac2_AC_2627_1C.pdf",
     "scripts/fix_nottaken.sh",
     "results/pag/run_2026-10-21_18-36-53/Pag_8_16/_resumen.csv",
     "results/pag/run_2026-10-21_18-36-53/Pag_8_16/vpr.log",
     "results/pag/run_2026-10-21_18-36-53/Pag_8_16/swim.log",
     "results/pag/run_2026-10-21_18-36-53/Pag_8_16/gap.log",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/bzip2.log",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/ammp.log"
+    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/bzip2.log"
   ]
 }
