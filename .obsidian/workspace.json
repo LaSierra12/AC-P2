@@ -39,7 +39,57 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "FASE 2.md",
+                "file": "obs/FASE 2.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "FASE 2"
+            }
+          },
+          {
+            "id": "08839e338f89e55a",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "obs/apuntes_enunciado.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "apuntes_enunciado"
+            }
+          },
+          {
+            "id": "97b64c2ab1a21ec6",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "prac2_AC_2627_1C.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "prac2_AC_2627_1C"
+            }
+          },
+          {
+            "id": "e6ce9d273ef68c8c",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "obs/mittalSurveyTechniquesDynamic2018.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "mittalSurveyTechniquesDynamic2018"
+            }
+          },
+          {
+            "id": "fe9ff48f1d554b17",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "obs/FASE 2.md",
                 "mode": "source",
                 "source": false
               },
@@ -48,7 +98,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -215,20 +265,21 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "9a0c85a30f4520c8",
+  "active": "fe9ff48f1d554b17",
   "lastOpenFiles": [
-    "apuntes_enunciado.pdf",
+    "obs/gdb-refcard.pdf",
+    "obs/FASE 1.md",
+    "obs/esquema.png",
+    "obs/apuntes_enunciado.pdf",
+    "obs/Branch_Prediction_1.pdf",
+    "obs/FASE 2.md",
+    "obs/Guia_Simple_Spec_P2-2.pdf",
+    "obs/mittalSurveyTechniquesDynamic2018.pdf",
     "prac2_AC_2627_1C.pdf",
-    "esquema.png",
-    "FASE 2.md",
-    "FASE 1.md",
-    "Tablas_graficas.ods",
-    "lu52564eh5c7.tmp",
-    "scripts/fix_nottaken.sh",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/_resumen.csv",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/vpr.log",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/swim.log",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/gap.log",
-    "results/pag/run_2026-10-21_18-36-53/Pag_8_16/bzip2.log"
+    "obs/1.  Modificación del Código C en SimpleScalar.md",
+    "obs/Guia_Simple_Spec_P2.pdf",
+    "obs",
+    "obs/FAQS P2.pdf",
+    "Tablas_graficas.ods"
   ]
 }

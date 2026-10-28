@@ -27,7 +27,19 @@ El comando en SimpleScalar será `-bpred agree -bpred:agree <Y> <X> <g> 0`1. Se 
 ---
 
 #### 🗺️ Plan de Ejecución de la Fase 2
-
+```
+milax@casa:~/Documents/AC-P2/simplesim-agree$ ls
+bitmap.h  endian.c   machine.h  ptrace.h     sim-eio.c       syscall.c
+bpred.c   endian.h   main.c     range.c      sim-fast.c      syscall.h
+bpred.h   eval.c     Makefile   range.h      sim.h           sysprobe.c
+cache.c   eval.h     memory.c   README       sim-outorder.c  target-alpha
+cache.h   eventq.c   memory.h   regs.c       sim-profile.c   target-pisa
+config.h  eventq.h   misc.c     regs.h       sim-safe.c      tests
+dlite.c   host.h     misc.h     resource.c   stats.c         tests-alpha
+dlite.h   loader.c   options.c  resource.h   stats.h         tests-pisa
+eio.c     loader.h   options.h  sim-bpred.c  symbol.c        version.h
+eio.h     machine.c  ptrace.c   sim-cache.c  symbol.h
+```
 Dividiremos la Fase 2 en **4 Pasos metódicos**:
 
 ###### **Paso 1: Modificación del Código C en SimpleScalar**
