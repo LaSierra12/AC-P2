@@ -49,6 +49,7 @@ Inspirándonos en la estructura del predictor `2lev` ya existente:
 1. **bpred.h**:
     - Añadir `BPredAgree` a la lista `enum bpred_class`.
     - Definir la estructura de datos del predictor AGREE (punteros a GBHR, BTBbis con campo $S$ y LRU, y tabla PHT).
+El predictor _Agree_ combina una tabla de historial/patrones (PHT con contadores de 2 bits) con unos **bits de sesgo (_biasing bits_)** que normalmente se almacenan en las entradas del BTB (_Branch Target Buffer_) o en una tabla asociada.
 2. **sim-outorder.c**:
     - Registrar la opción `-bpred:agree` en `sim_reg_options()`.
     - Declarar variables de configuración `agree_config` y `agree_nelt`.

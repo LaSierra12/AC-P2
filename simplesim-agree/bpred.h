@@ -104,6 +104,7 @@ enum bpred_class {
   BPred2bit,			/* 2-bit saturating cntr pred (dir mapped) */
   BPredTaken,			/* static predict taken */
   BPredNotTaken,		/* static predict not taken */
+  BPredAgree, /* 2-level w PHT & BTBbis*/
   BPred_NUM
 };
 
@@ -113,6 +114,7 @@ struct bpred_btb_ent_t {
   enum md_opcode op;		/* opcode of branch corresp. to addr */
   md_addr_t target;		/* last destination of branch when taken */
   struct bpred_btb_ent_t *prev, *next; /* lru chaining pointers */
+  unsigned char s; /*S=> bit de sesgo (biasing bit)*/
 };
 
 /* direction predictor def */
@@ -131,6 +133,14 @@ struct bpred_dir_t {
       int *shiftregs;		/* level-1 history table */
       unsigned char *l2table;	/* level-2 prediction state table */
     } two;
+    struct {
+      int l1size;             /* Entradas del BTBbis (Y) */
+      int l2size;             /* Entradas de la PHT (X) */
+      int g;        /* Anchura del GBHR (g) */
+      int xor ;               /* Flag de xor si se requiere */
+      int *shiftregs;         /* Registro de historial global (GBHR) */
+      unsigned char *l2table; /* Tabla PHT de contadores de 2 bits */
+    }agree;
   } config;
 };
 
