@@ -140,7 +140,7 @@ struct bpred_dir_t {
       int xor ;               /* Flag de xor si se requiere */
       int *shiftregs;         /* Registro de historial global (GBHR) */
       unsigned char *l2table; /* Tabla PHT de contadores de 2 bits */
-    }agree;
+    } agree;
   } config;
 };
 
