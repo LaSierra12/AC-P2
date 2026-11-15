@@ -104,6 +104,7 @@ enum bpred_class {
   BPred2bit,			/* 2-bit saturating cntr pred (dir mapped) */
   BPredTaken,			/* static predict taken */
   BPredNotTaken,		/* static predict not taken */
+  BPredAgree, /*predictor AGREE*/
   BPred_NUM
 };
 
@@ -113,6 +114,14 @@ struct bpred_btb_ent_t {
   enum md_opcode op;		/* opcode of branch corresp. to addr */
   md_addr_t target;		/* last destination of branch when taken */
   struct bpred_btb_ent_t *prev, *next; /* lru chaining pointers */
+};
+
+/* entrada al AGREE BTBbis (full asociativo) */
+struct bpred_btbbis_ent_t
+{
+  md_addr_t tag;   /* tag */
+  unsigned char s; /* behavior bit: 1=Taken, 0=NotTaken */
+  counter_t last_used;  /* LRU timestamp para reemplazar */
 };
 
 /* direction predictor def */
@@ -130,6 +139,12 @@ struct bpred_dir_t {
       int xor;			/* history xor address flag */
       int *shiftregs;		/* level-1 history table */
       unsigned char *l2table;	/* level-2 prediction state table */
+
+      md_addr_t gbhr;
+      struct bpred_btbbis_ent_t *btbbis;
+      int index_bits;
+      counter_t lru_counter;
+
     } two;
   } config;
 };
@@ -184,6 +199,10 @@ struct bpred_update_t {
     unsigned int twolev : 1;    /* 2-level predictor */
     unsigned int meta   : 1;    /* meta predictor (0..bimod / 1..2lev) */
   } dir;
+
+    /*adding AGREE filds*/
+  struct bpred_btbbis_ent_t *btbbis_ent;
+  int btbbis_hit; /* 1=hit, 0=miss */
 };
 
 /* create a branch predictor */

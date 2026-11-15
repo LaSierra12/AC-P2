@@ -43,22 +43,12 @@
             "id": "3a1077096722d3fb",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "image",
               "state": {
-                "file": "obs/Guia_Simple_Spec_P2-2.pdf"
+                "file": "obs/esquema.png"
               },
-              "icon": "lucide-file-text",
-              "title": "Guia_Simple_Spec_P2-2"
-            }
-          },
-          {
-            "id": "13a86abf07c9e4c3",
-            "type": "leaf",
-            "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "Nueva pestaña"
+              "icon": "lucide-image",
+              "title": "esquema"
             }
           },
           {
@@ -67,10 +57,10 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "obs/apuntes_enunciado.pdf"
+                "file": "obs/Guia_Simple_Spec_P2.pdf"
               },
               "icon": "lucide-file-text",
-              "title": "apuntes_enunciado"
+              "title": "Guia_Simple_Spec_P2"
             }
           },
           {
@@ -161,8 +151,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "e962bfed88797a3c",
@@ -269,19 +258,20 @@
   },
   "active": "3a1077096722d3fb",
   "lastOpenFiles": [
-    "prac2_AC_2627_1C.pdf",
-    "obs/FASE 2.md",
-    "obs/apuntes_enunciado.pdf",
-    "obs/Guia_Simple_Spec_P2-2.pdf",
-    "obs/1.  Modificación del Código C en SimpleScalar.md",
-    "obs/mittalSurveyTechniquesDynamic2018.pdf",
-    "obs/esquema.png",
-    "obs/Branch_Prediction_1.pdf",
-    "obs/Guia_Simple_Spec_P2.pdf",
-    "obs/gdb-refcard.pdf",
-    "obs/FASE 1.md",
     "obs/FAQS P2.pdf",
-    "obs",
-    "Tablas_graficas.ods"
+    "obs/Guia_Simple_Spec_P2-2.pdf",
+    "obs/mittalSurveyTechniquesDynamic2018.pdf",
+    "obs/FASE 2.md",
+    "simplesim-3.0_acx2/hack_guide.pdf",
+    "simplesim-3.0_acx2/target-pisa/syscall.c",
+    "simplesim-3.0_acx2/target-pisa/symbol.c",
+    "simplesim-3.0_acx2/target-pisa/pisa.h",
+    "simplesim-3.0_acx2/target-pisa/pisa.def",
+    "simplesim-3.0_acx2/target-pisa/pisa.c",
+    "simplesim-3.0_acx2/target-pisa/loader.c",
+    "simplesim-3.0_acx2/target-pisa/ecoff.h",
+    "obs/1.  Modificación del Código C en SimpleScalar.md",
+    "obs/FASE 1.md",
+    "obs/esquema.png"
   ]
 }

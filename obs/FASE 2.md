@@ -1,4 +1,17 @@
+## Flujo real de SimpleScalar
 
+Para no editar a ciegas, entiende este flujo:
+
+1. **`bpred_create()`** en `bpred.c` crea el predictor global, el BTB y el RAS. Según `class`, llama a `bpred_dir_create()` para crear el predictor de dirección.
+    
+2. **`bpred_lookup()`** se llama en la etapa de fetch. Predice dirección/tomado-no-tomado y devuelve un `struct bpred_update_t *`.
+    
+3. **`bpred_update()`** se llama cuando el branch se resuelve. Actualiza contadores, historiales y estadísticas.
+    
+4. **`bpred_recover()`** restaura el RAS tras un fallo de predicción.
+    
+
+Por tanto, si añades un predictor nuevo, **no basta con tocar `bpred.h`**: tendrás que tocar también `bpred.c` y, probablemente, `sim-bpred.c` / `sim-outorder.c` para que se pueda seleccionar por línea de comandos.
 ## Resumen Teórico y Mecánica del Predictor AGREE
 
 El predictor **AGREE** es un predictor dinámico que busca reducir el _aliasing_ (colisiones negativas en la PHT) convirtiendo las colisiones en neutras o beneficiosas mediante un *bit de sesgo (**biasing bit** $S$).
