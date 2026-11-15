@@ -57,10 +57,10 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "obs/Guia_Simple_Spec_P2.pdf"
+                "file": "obs/Guia_Simple_Spec_P2-2.pdf"
               },
               "icon": "lucide-file-text",
-              "title": "Guia_Simple_Spec_P2"
+              "title": "Guia_Simple_Spec_P2-2"
             }
           },
           {
@@ -90,7 +90,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -258,22 +258,22 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "97b64c2ab1a21ec6",
+  "active": "08839e338f89e55a",
   "lastOpenFiles": [
+    "simplesim-3.0_acx2/machine.def",
+    "simplesim-3.0_acx2/loader.h",
+    "simplesim-3.0_acx2/memory.h",
+    "simplesim-3.0_acx2/eval.h",
+    "simplesim-3.0_acx2/machine.h",
+    "simplesim-3.0_acx2/host.h",
     "obs/Guia_Simple_Spec_P2.pdf",
+    "obs/mittalSurveyTechniquesDynamic2018.pdf",
+    "obs/1.  Modificación del Código C en SimpleScalar.md",
     "obs/esquema.png",
     "obs/FAQS P2.pdf",
     "obs/Guia_Simple_Spec_P2-2.pdf",
-    "obs/mittalSurveyTechniquesDynamic2018.pdf",
     "obs/FASE 2.md",
     "simplesim-3.0_acx2/hack_guide.pdf",
-    "simplesim-3.0_acx2/target-pisa/syscall.c",
-    "simplesim-3.0_acx2/target-pisa/symbol.c",
-    "simplesim-3.0_acx2/target-pisa/pisa.h",
-    "simplesim-3.0_acx2/target-pisa/pisa.def",
-    "simplesim-3.0_acx2/target-pisa/pisa.c",
-    "simplesim-3.0_acx2/target-pisa/loader.c",
-    "obs/1.  Modificación del Código C en SimpleScalar.md",
     "obs/FASE 1.md"
   ]
 }
