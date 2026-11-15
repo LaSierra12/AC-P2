@@ -89,7 +89,8 @@
               "title": "mittalSurveyTechniquesDynamic2018"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -151,7 +152,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "e962bfed88797a3c",
@@ -256,8 +258,10 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "3a1077096722d3fb",
+  "active": "97b64c2ab1a21ec6",
   "lastOpenFiles": [
+    "obs/Guia_Simple_Spec_P2.pdf",
+    "obs/esquema.png",
     "obs/FAQS P2.pdf",
     "obs/Guia_Simple_Spec_P2-2.pdf",
     "obs/mittalSurveyTechniquesDynamic2018.pdf",
@@ -269,9 +273,7 @@
     "simplesim-3.0_acx2/target-pisa/pisa.def",
     "simplesim-3.0_acx2/target-pisa/pisa.c",
     "simplesim-3.0_acx2/target-pisa/loader.c",
-    "simplesim-3.0_acx2/target-pisa/ecoff.h",
     "obs/1.  Modificación del Código C en SimpleScalar.md",
-    "obs/FASE 1.md",
-    "obs/esquema.png"
+    "obs/FASE 1.md"
   ]
 }

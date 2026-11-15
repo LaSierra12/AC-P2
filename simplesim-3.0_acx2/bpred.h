@@ -119,9 +119,10 @@ struct bpred_btb_ent_t {
 /* entrada al AGREE BTBbis (full asociativo) */
 struct bpred_btbbis_ent_t
 {
-  md_addr_t tag;   /* tag */
-  unsigned char s; /* behavior bit: 1=Taken, 0=NotTaken */
-  counter_t last_used;  /* LRU timestamp para reemplazar */
+  md_addr_t tag;   /* branch address tag (like "addr" in bpred_btb_ent_t) */
+  unsigned char s; /* behavior bit: 1 = Taken, 0 = NotTaken */
+  unsigned char valid;  /* 1 = entry contains real data, 0 = empty slot */
+  counter_t last_used;  /* LRU timestamp para reemplazar (higher= MRU) */
 };
 
 /* direction predictor def */
