@@ -1,0 +1,2 @@
+=== vpr | bimod/bimod_128 | 2026-11-16_02-59-12 ===
+Opciones: -bpred bimod -bpred:bimod 128
