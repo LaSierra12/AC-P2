@@ -1,0 +1,2 @@
+./ejecutar_fase1.sh: línia 106: error de sintaxi a prop de l'element inesperat «<»
+./ejecutar_fase1.sh: línia 106: `                  ./swim.exe < swim.in >> "$logfile" 2>&1 ;;'
