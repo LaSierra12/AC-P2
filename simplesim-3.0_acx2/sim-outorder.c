@@ -967,7 +967,6 @@ void sim_check_options(struct opt_odb_t *odb, /* options database */
             "(<btbbis_size> <pht_size> <gbhr_width> <unused>)");
     if (btb_nelt != 2)
       fatal("bad btb config (<num_sets> <associativity>)");
-    \n
         pred = bpred_create(BPredAgree,
                             /* bimod table size */ 0,
                             /* 2lev l1 size = BTBbis entries (Y) */

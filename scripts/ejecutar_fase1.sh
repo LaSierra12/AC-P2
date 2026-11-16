@@ -12,6 +12,7 @@ SPECWORK_DIR="$PROJECT_DIR/specwork"
 RESULTS_ROOT="$PROJECT_DIR/results"
 CSV_DIR="$RESULTS_ROOT/csv"
 LOG_DIR="$CSV_DIR/logs"
+SIM_BIN="$PROJECT_DIR/simplesim-3.0_acx2/sim-outorder"
 
 mkdir -p "$SPECWORK_DIR" "$CSV_DIR" "$LOG_DIR"
 
@@ -68,6 +69,13 @@ Pag_32_256|Pag|-bpred 2lev -bpred:2lev 32 256 8 0
 Pag_64_1024|Pag|-bpred 2lev -bpred:2lev 64 1024 10 0
 Pag_32_2048|Pag|-bpred 2lev -bpred:2lev 32 2048 11 0"
 
+FAMILY_ORDER+=(gap)
+FAMILY_CONFIGS[gap]="GAp_8_2|GAp|-bpred 2lev -bpred:2lev 1 8 2 0
+GAp_32_3|GAp|-bpred 2lev -bpred:2lev 1 32 3 0
+GAp_128_4|GAp|-bpred 2lev -bpred:2lev 1 128 4 0
+GAp_512_6|GAp|-bpred 2lev -bpred:2lev 1 512 6 0
+GAp_2048_8|GAp|-bpred 2lev -bpred:2lev 1 2048 8 0"
+
 # --- Helpers ---
 prepare_specwork() {
     local b="$1"
@@ -89,18 +97,18 @@ run_bench() {
     cd "$SPECWORK_DIR/$bench" || return 1
     local common="-fastfwd $FASTFWD -max:inst $MAX_INST -mem:width $MEM_WIDTH -mem:lat $MEM_LAT"
     case "$bench" in
-        bzip2) sim-outorder $common $opts -redir:sim "$simout" \
-                  ./bzip2.exe input.source 58 >> "$logfile" 2>&1 ;;
-        ammp)  sim-outorder $common $opts -redir:sim "$simout" \
+        bzip2) "$SIM_BIN" $common $opts -redir:sim "$simout" \
+                  ./bzip2.exe input.source 1 >> "$logfile" 2>&1 ;;
+        ammp)  "$SIM_BIN" $common $opts -redir:sim "$simout" \
                   ./ammp.exe < ammp.in >> "$logfile" 2>&1 ;;
-        gap)   sim-outorder $common $opts -redir:sim "$simout" \
+        gap)   "$SIM_BIN" $common $opts -redir:sim "$simout" \
                   ./gap.exe -l ./all -q -m 192M < ref.in >> "$logfile" 2>&1 ;;
-        swim)  sim-outorder $common $opts -redir:sim "$simout" \
+        swim)  "$SIM_BIN" $common $opts -redir:sim "$simout" \
                   ./swim.exe < swim.in >> "$logfile" 2>&1 ;;
-        vpr)   sim-outorder $common $opts -redir:sim "$simout" \
-                  ./vpr.exe net.in arch.in "$RESULTS_ROOT/place.out" "$RESULTS_ROOT/dum.out" \
-                  -nodisp -place_only -init_t 5 -exit_t 0.005 \
-                  -alpha_t 0.9412 -inner_num 2 >> "$logfile" 2>&1 ;;
+        vpr) "$SIM_BIN" $common $opts -redir:sim "$simout" \
+                    ./vpr.exe net.in arch.in place.in -nodisp \
+                    -place_only -init_t 5 -exit_t 0.005 \
+                    -alpha_t 0.9412 -inner_num 2 >> "$logfile" 2>&1 ;;
         *) return 1 ;;
     esac
 }

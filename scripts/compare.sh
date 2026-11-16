@@ -31,7 +31,7 @@ echo "================================================================"
 echo " COMPARE - TIMESTAMP=$TIMESTAMP"
 echo "================================================================"
 
-FAMILIES=(estaticos bimod gshare gag pag)
+FAMILIES=(estaticos bimod gshare gag pag gap)
 
 # (config|tipo|familia) en orden
 CONFIGS=()
@@ -51,6 +51,7 @@ for F in "${FAMILIES[@]}"; do
             gshare)    TYPE="Gshare" ;;
             gag)       TYPE="Gag" ;;
             pag)       TYPE="Pag" ;;
+            gap)       TYPE="GAp" ;;
         esac
         CONFIGS+=("$CFG|$TYPE|$F")
     done

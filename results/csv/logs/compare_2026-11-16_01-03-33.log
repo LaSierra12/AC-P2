@@ -1,0 +1,13 @@
+================================================================
+ COMPARE - TIMESTAMP=2026-11-16_01-03-33
+================================================================
+[WARN] no existe /home/milax/Documents/AC-P2/results/gap/run_2026-11-16_01-03-33
+Configs detectadas: 24
+
+================================================================
+ CSVs generados en /home/milax/Documents/AC-P2/results/csv
+   - Resultados_Completos_Fase1.csv
+   - Resultados_IPC.csv
+   - Resultados_Tasa_Acierto.csv
+ Copia histórica: /home/milax/Documents/AC-P2/results/csv/history/2026-11-16_01-03-33/
+================================================================

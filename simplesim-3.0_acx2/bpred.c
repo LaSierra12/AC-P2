@@ -990,85 +990,75 @@ void bpred_update(struct bpred_t *pred,                  /* branch predictor ins
   }
 #endif /* RAS_BUG_COMPATIBLE */
 
-  /* AGREE-specific update: GBHR, BTBbis, PHT */
-  if (pred->class == BPredAgree &&
-      (MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND))
-  {
-    struct bpred_dir_t *two = pred->dirpred.twolev;
-    int s;
+/* AGREE-specific update: GBHR, BTBbis, PHT */
+if (pred->class == BPredAgree &&
+    (MD_OP_FLAGS(op) & (F_CTRL|F_UNCOND)) != (F_CTRL|F_UNCOND)) {
+  struct bpred_dir_t *two = pred->dirpred.twolev;
+  int s;
 
-    /* Paso 1: determinar S (del BTBbis si HIT, default 1 si MISS) */
-    if (dir_update_ptr->btbbis_hit)
-    {
-      s = dir_update_ptr->btbbis_ent->s;
-    }
-    else
-    {
-      s = 1; /* valor inicial por defecto */
-    }
-
-    /* Paso 2: actualizar PHT.
-     * Si el comportamiento real coincide con S → incrementar.
-     * Si discrepa → decrementar. */
-    if (!!taken == s)
-    {
-      if (*dir_update_ptr->pdir1 < 3)
-        ++*dir_update_ptr->pdir1;
-    }
-    else
-    {
-      if (*dir_update_ptr->pdir1 > 0)
-        --*dir_update_ptr->pdir1;
-    }
-
-    /* Paso 3: actualizar BTBbis */
-    if (!dir_update_ptr->btbbis_hit)
-    {
-      /* MISS: insertar nueva entrada (buscar hueco libre o LRU) */
-      struct bpred_btbbis_ent_t *victim = NULL;
-      counter_t min_lru = (counter_t)-1;
-      int j;
-
-      /* Primero, buscar un hueco libre (valid == 0) */
-      for (j = 0; j < two->config.two.l1size; j++)
-      {
-        if (!two->config.two.btbbis[j].valid)
-        {
-          victim = &two->config.two.btbbis[j];
-          break;
-        }
-      }
-
-      /* Si no hay hueco, evictar el LRU */
-      if (!victim)
-      {
-        for (j = 0; j < two->config.two.l1size; j++)
-        {
-          if (two->config.two.btbbis[j].last_used < min_lru)
-          {
-            min_lru = two->config.two.btbbis[j].last_used;
-            victim = &two->config.two.btbbis[j];
-          }
-        }
-      }
-
-      dassert(victim != NULL);
-
-      /* Insertar el branch con su primer comportamiento observado */
-      victim->tag = baddr;
-      victim->s = !!taken;
-      victim->valid = 1;
-      victim->last_used = ++two->config.two.lru_counter;
-    }
-    else
-    {
-      /* HIT: solo actualizar LRU (S no cambia) */
-      dir_update_ptr->btbbis_ent->last_used = ++two->config.two.lru_counter;
-    }
-
-    /* Paso 4: actualizar GBHR (shift + taken en el bit bajo) */
-    two->config.two.gbhr = (two->config.two.gbhr << 1) | !!taken;
+  /* Paso 1: determinar S (BTBbis si HIT, default 1 si MISS) */
+  if (dir_update_ptr->btbbis_hit) {
+    s = dir_update_ptr->btbbis_ent->s;
+  } else {
+    s = 1;
   }
+
+  /* Paso 2: actualizar PHT (coincide con S -> ++, discrepa -> --) */
+  if (!!taken == s) {
+    if (*dir_update_ptr->pdir1 < 3)
+      ++*dir_update_ptr->pdir1;
+  } else {
+    if (*dir_update_ptr->pdir1 > 0)
+      --*dir_update_ptr->pdir1;
+  }
+
+  /* Paso 3: actualizar BTBbis */
+  if (!dir_update_ptr->btbbis_hit) {
+    struct bpred_btbbis_ent_t *victim = NULL;
+    counter_t min_lru;
+    int j;
+
+    /* 3a. Buscar hueco libre (valid == 0) */
+    for (j = 0; j < two->config.two.l1size; j++) {
+      if (two->config.two.btbbis[j].valid == 0) {
+        victim = &two->config.two.btbbis[j];
+        break;
+      }
+    }
+
+    /* 3b. Si no hay hueco, evictar el LRU.
+     *     Inicializamos min_lru con el PRIMER elemento (no con (counter_t)-1)
+     *     para evitar problemas con tipos unsigned. */
+    if (victim == NULL) {
+      victim = &two->config.two.btbbis[0];
+      min_lru = two->config.two.btbbis[0].last_used;
+      for (j = 1; j < two->config.two.l1size; j++) {
+        if (two->config.two.btbbis[j].last_used < min_lru) {
+          min_lru = two->config.two.btbbis[j].last_used;
+          victim = &two->config.two.btbbis[j];
+        }
+      }
+    }
+
+    /* 3c. Comprobación defensiva: si sigue NULL, algo muy raro pasa */
+    if (victim == NULL)
+      fatal("AGREE: no victim in BTBbis (l1size=%d, lru_counter=%llu)",
+            two->config.two.l1size,
+            (unsigned long long)two->config.two.lru_counter);
+
+    /* 3d. Insertar */
+    victim->tag       = baddr;
+    victim->s         = !!taken;
+    victim->valid     = 1;
+    victim->last_used = ++two->config.two.lru_counter;
+  } else {
+    /* HIT: solo actualizar LRU */
+    dir_update_ptr->btbbis_ent->last_used = ++two->config.two.lru_counter;
+  }
+
+  /* Paso 4: actualizar GBHR (shift + taken en el bit bajo) */
+  two->config.two.gbhr = (two->config.two.gbhr << 1) | !!taken;
+}
 
   /* update L1 table if appropriate */
   /* L1 table is updated unconditionally for combining predictor too */
