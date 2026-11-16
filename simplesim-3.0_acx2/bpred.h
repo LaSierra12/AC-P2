@@ -119,10 +119,10 @@ struct bpred_btb_ent_t {
 /* entrada al AGREE BTBbis (full asociativo) */
 struct bpred_btbbis_ent_t
 {
-  md_addr_t tag;   /* branch address tag (like "addr" in bpred_btb_ent_t) */
-  unsigned char s; /* behavior bit: 1 = Taken, 0 = NotTaken */
-  unsigned char valid;  /* 1 = entry contains real data, 0 = empty slot */
-  counter_t last_used;  /* LRU timestamp para reemplazar (higher= MRU) */
+  md_addr_t tag;   /* tag: dirección de salto (como addr en bpred_btb_ent_t) */
+  unsigned char s; /* bit de comportamiento: 1 = taken, 0 = not taken */
+  unsigned char valid;  /* 1 = la entrada contiene datos reales, 0 = slot vacío */
+  counter_t last_used;  /* timestamp LRU para reemplazar (higher = MRU) */
 };
 
 /* direction predictor def */
@@ -141,10 +141,11 @@ struct bpred_dir_t {
       int *shiftregs;		/* level-1 history table */
       unsigned char *l2table;	/* level-2 prediction state table */
 
-      md_addr_t gbhr;
-      struct bpred_btbbis_ent_t *btbbis;
-      int index_bits;
-      counter_t lru_counter;
+      /* añadimos los campos del AGREE */
+      md_addr_t gbhr; /* Dirección al global branch history register */
+      struct bpred_btbbis_ent_t *btbbis;  /* Tabla de predicción (BTBbis) */
+      int index_bits; /* Número de bits para indexar la tabla BTBbis */
+      counter_t lru_counter;  /* Contador para implementar LRU en BTBbis */
 
     } two;
   } config;
