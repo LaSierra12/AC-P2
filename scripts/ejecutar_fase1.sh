@@ -69,12 +69,19 @@ Pag_32_256|Pag|-bpred 2lev -bpred:2lev 32 256 8 0
 Pag_64_1024|Pag|-bpred 2lev -bpred:2lev 64 1024 10 0
 Pag_32_2048|Pag|-bpred 2lev -bpred:2lev 32 2048 11 0"
 
-FAMILY_ORDER+=(gap)
-FAMILY_CONFIGS[gap]="GAp_8_2|GAp|-bpred 2lev -bpred:2lev 1 8 2 0
+FAMILY_ORDER+=(gapred) # Cambio de nombre por si acaso
+FAMILY_CONFIGS[gapred]="GAp_8_2|GAp|-bpred 2lev -bpred:2lev 1 8 2 0
 GAp_32_3|GAp|-bpred 2lev -bpred:2lev 1 32 3 0
 GAp_128_4|GAp|-bpred 2lev -bpred:2lev 1 128 4 0
 GAp_512_6|GAp|-bpred 2lev -bpred:2lev 1 512 6 0
 GAp_2048_8|GAp|-bpred 2lev -bpred:2lev 1 2048 8 0"
+
+FAMILY_ORDER+=(pap)
+FAMILY_CONFIGS[pap]="PAp_4_8_2|PAp|-bpred 2lev -bpred:2lev 4 8 2 0
+PAp_8_32_3|PAp|-bpred 2lev -bpred:2lev 8 32 3 0
+PAp_16_128_4|PAp|-bpred 2lev -bpred:2lev 16 128 4 0
+PAp_32_512_6|PAp|-bpred 2lev -bpred:2lev 32 512 6 0
+PAp_64_2048_8|PAp|-bpred 2lev -bpred:2lev 64 2048 8 0"
 
 
 
@@ -100,7 +107,7 @@ run_bench() {
     local common="-fastfwd $FASTFWD -max:inst $MAX_INST -mem:width $MEM_WIDTH -mem:lat $MEM_LAT"
     case "$bench" in
         bzip2) "$SIM_BIN" $common $opts -redir:sim "$simout" \
-                  ./bzip2.exe input.source 1 >> "$logfile" 2>&1 ;;
+                  ./bzip2.exe input.source 58 >> "$logfile" 2>&1 ;;
         ammp)  "$SIM_BIN" $common $opts -redir:sim "$simout" \
                   ./ammp.exe < ammp.in >> "$logfile" 2>&1 ;;
         gap)   "$SIM_BIN" $common $opts -redir:sim "$simout" \

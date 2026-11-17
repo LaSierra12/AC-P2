@@ -16,6 +16,16 @@ TIMESTAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 RUN_LOG="$LOG_DIR/agree_${TIMESTAMP}.log"
 exec > >(tee -a "$RUN_LOG") 2>&1
 
+echo ""
+echo "================================================================"
+echo " EJECUCIÓN FASE 2 (AGREE) - $TIMESTAMP"
+echo " Salida raíz : $RESULTS_ROOT"
+echo " Log         : $RUN_LOG"
+echo "================================================================"
+echo ""
+echo "================================================================"
+echo " FAMILIA: agree"
+echo "================================================================"
 FASTFWD=100000000
 MAX_INST=100000000
 MEM_WIDTH=32
@@ -37,7 +47,7 @@ run_bench() {
     local common="-fastfwd $FASTFWD -max:inst $MAX_INST -mem:width $MEM_WIDTH -mem:lat $MEM_LAT"
     case "$bench" in
         bzip2) "$SIM_BIN" $common $opts -redir:sim "$simout" \
-                  ./bzip2.exe input.source 1 >> "$logfile" 2>&1 ;;
+                  ./bzip2.exe input.source 58 >> "$logfile" 2>&1 ;;
         ammp)  "$SIM_BIN" $common $opts -redir:sim "$simout" \
                   ./ammp.exe < ammp.in >> "$logfile" 2>&1 ;;
         gap)   "$SIM_BIN" $common $opts -redir:sim "$simout" \
@@ -77,7 +87,7 @@ for cfg in "${CONFIGS[@]}"; do
     CFG_RESUME="$CFG_DIR/_resumen.csv"
     printf '\xEF\xBB\xBF' > "$CFG_RESUME"
     echo "$HEADER" >> "$CFG_RESUME"
-    echo ""; echo "--- $CFG_NAME ---"
+    echo ""; echo "--- agree/$CFG_NAME (AGREE) ---"
 
     for BENCH in "${BENCHMARKS[@]}"; do
         STATS="$CFG_DIR/${BENCH}.stats"
@@ -134,5 +144,48 @@ benchmarks=${BENCHMARKS[*]}
 configs=${CONFIGS[*]}
 EOF
 
-echo ""; echo "=== COMPLETADO: OK=$TOTAL_OK FAIL=$TOTAL_FAIL ==="
-echo "CSV: $RESUME"
+# === Generar CSV agregado con formato de Fase 1 ===
+AGREE_CSV="$AGREE_DIR/Resultados_AGREE.csv"
+printf '\xEF\xBB\xBF' > "$AGREE_CSV"
+echo "Configuracion;Tipo_Predictor;ammp_IPC;ammp_%Acierto;bzip2_IPC;bzip2_%Acierto;gap_IPC;gap_%Acierto;swim_IPC;swim_%Acierto;vpr_IPC;vpr_%Acierto;Media_IPC;Media_%Acierto" >> "$AGREE_CSV"
+
+for cfg in "${CONFIGS[@]}"; do
+    read -r Y X g <<< "$cfg"
+    CFG_NAME="Agree_Y${Y}_X${X}_g${g}"
+    CFG_RESUME="$AGREE_DIR/$CFG_NAME/_resumen.csv"
+    [ ! -f "$CFG_RESUME" ] && continue
+
+    row="$CFG_NAME;AGREE"
+    ipc_sum=0; ipc_n=0
+    acc_sum=0; acc_n=0
+    for BENCH in ammp bzip2 gap swim vpr; do
+        line=$(awk -F';' -v b="$BENCH" '$1==b {print; exit}' "$CFG_RESUME")
+        ipc_raw=$(echo "$line" | cut -d';' -f2)
+        acc_raw=$(echo "$line" | cut -d';' -f11)
+        row="$row;$ipc_raw;$acc_raw"
+        if [ -n "$ipc_raw" ]; then
+            v=$(echo "$ipc_raw" | tr ',' '.')
+            ipc_sum=$(awk -v a="$ipc_sum" -v b="$v" 'BEGIN{printf "%.10f", a+b}')
+            ipc_n=$((ipc_n+1))
+        fi
+        if [ -n "$acc_raw" ]; then
+            v=$(echo "$acc_raw" | tr ',' '.')
+            acc_sum=$(awk -v a="$acc_sum" -v b="$v" 'BEGIN{printf "%.10f", a+b}')
+            acc_n=$((acc_n+1))
+        fi
+    done
+    m_ipc=$(awk -v s="$ipc_sum" -v n="$ipc_n" 'BEGIN{printf "%.4f", s/n}' | tr '.' ',')
+    m_acc=$(awk -v s="$acc_sum" -v n="$acc_n" 'BEGIN{printf "%.4f", s/n}' | tr '.' ',')
+    row="$row;$m_ipc;$m_acc"
+    echo "$row" >> "$AGREE_CSV"
+done
+
+echo "CSV agregado AGREE: $AGREE_CSV"
+
+echo ""
+echo "================================================================"
+echo " COMPLETADO"
+echo " OK:   $TOTAL_OK"
+echo " FAIL: $TOTAL_FAIL"
+echo " CSV:  $RESUME"
+echo "================================================================"

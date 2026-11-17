@@ -31,31 +31,61 @@ echo "================================================================"
 echo " COMPARE - TIMESTAMP=$TIMESTAMP"
 echo "================================================================"
 
-FAMILIES=(estaticos bimod gshare gag pag gap)
+FAMILIES=(estaticos bimod gshare gag pag gapred pap)
 
 # (config|tipo|familia) en orden
 CONFIGS=()
 for F in "${FAMILIES[@]}"; do
     RUN_DIR="$RESULTS_ROOT/$F/run_$TIMESTAMP"
     if [ ! -d "$RUN_DIR" ]; then
-        echo "[WARN] no existe $RUN_DIR"
-        continue
+        echo "[WARN] no existe $RUN_DIR"; continue
     fi
+    case "$F" in
+        estaticos) TYPE="Estático" ;;
+        bimod)     TYPE="Bimodal" ;;
+        gshare)    TYPE="Gshare" ;;
+        gag)       TYPE="Gag" ;;
+        pag)       TYPE="Pag" ;;
+        gapred)    TYPE="GAp" ;;
+        pap)       TYPE="PAp" ;;
+    esac
+
+    # Recoge solo las configs de ESTA familia
+    FAMILY_CFGS=()
     for D in "$RUN_DIR"/*/; do
         CFG=$(basename "$D")
-        [ ! -f "$D/_resumen.csv" ] && continue
-        # tipo según familia
-        case "$F" in
-            estaticos) TYPE="Estático" ;;
-            bimod)     TYPE="Bimodal" ;;
-            gshare)    TYPE="Gshare" ;;
-            gag)       TYPE="Gag" ;;
-            pag)       TYPE="Pag" ;;
-            gap)       TYPE="GAp" ;;
-        esac
+        [ -f "$D/_resumen.csv" ] || continue
+        FAMILY_CFGS+=("$CFG")
+    done
+
+    # Ordena dentro de la familia:
+    #   - estáticos: orden manual (taken, nottaken, perfect)
+    #   - resto: por el último bloque numérico
+    if [ "$F" = "estaticos" ]; then
+        ORDERED=(taken nottaken perfect)
+    else
+        mapfile -t ORDERED < <(
+            printf '%s\n' "${FAMILY_CFGS[@]}" | awk -F'_' '{
+                print $NF "|" $0
+            }' | sort -t'|' -k1,1n | cut -d'|' -f2-
+        )
+    fi
+
+    for CFG in "${ORDERED[@]}"; do
         CONFIGS+=("$CFG|$TYPE|$F")
     done
 done
+    # Ordenar las configs de esta familia por el número final
+    CONFIGS_SORTED=()
+    while IFS= read -r line; do CONFIGS_SORTED+=("$line"); done < <(printf '%s\n' "${CONFIGS[@]}" | awk -F'|' '{
+        # Extrae el sufijo numérico del nombre
+        n = split($1, a, "_")
+        last = a[n]
+        # Si no es numérico, usa 0
+        if (last !~ /^[0-9]+$/) last = 0
+        print last "|" $0
+    }' | sort -t'|' -k1,1n | cut -d'|' -f2-)
+    CONFIGS=("${CONFIGS_SORTED[@]}")
 
 echo "Configs detectadas: ${#CONFIGS[@]}"
 
