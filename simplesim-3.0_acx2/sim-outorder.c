@@ -967,19 +967,19 @@ void sim_check_options(struct opt_odb_t *odb, /* options database */
             "(<btbbis_size> <pht_size> <gbhr_width> <unused>)");
     if (btb_nelt != 2)
       fatal("bad btb config (<num_sets> <associativity>)");
-        pred = bpred_create(BPredAgree,
-                            /* bimod table size */ 0,
-                            /* 2lev l1 size = BTBbis entries (Y) */
-                            agree_config[0],
-                            /* 2lev l2 size = PHT entries (X) */
-                            agree_config[1],
-                            /* meta table size */ 0,
-                            /* history reg size = GBHR width (g) */
-                            agree_config[2],
-                            /* history xor address */ 0,
-                            /* btb sets */ btb_config[0],
-                            /* btb assoc */ btb_config[1],
-                            /* ret-addr stack size */ ras_size);
+    pred = bpred_create(BPredAgree,
+                        /* bimod table size */ 0,
+                        /* 2lev l1 size = BTBbis entries (Y) */
+                        agree_config[0],
+                        /* 2lev l2 size = PHT entries (X) */
+                        agree_config[1],
+                        /* meta table size */ 0,
+                        /* history reg size = GBHR width (g) */
+                        agree_config[2],
+                        /* history xor address */ 0,
+                        /* btb sets */ btb_config[0],
+                        /* btb assoc */ btb_config[1],
+                        /* ret-addr stack size */ ras_size);
   }
   else
     fatal("cannot parse predictor type `%s'", pred_type);
