@@ -121,11 +121,11 @@ static int twolev_nelt = 4;
 static int twolev_config[4] =
     {/* l1size */ 1, /* l2size */ 1024, /* hist */ 8, /* xor */ FALSE};
 
-/* AGREE predictor config (<btbbis_size> <pht_size> <gbhr_width> <unused>) */
+/* Configuración de AGREE: -bpred:agree <Y> <X> <g> 0 (el cuarto valor no se usa) */
 static int agree_nelt = 4;
 static int agree_config[4] =
-    {/* BTBbis entries (Y) */ 4, /* PHT entries (X) */ 8,
-     /* GBHR width (g) */ 2, /* unused */ 0};
+    {/* entradas BTBbis (Y) */ 4, /* entradas PHT (X) */ 8,
+     /* bits GBHR (g) */ 2, /* sin uso */ 0};
 
 /* combining predictor config (<meta_table_size> */
 static int comb_nelt = 1;
@@ -961,25 +961,26 @@ void sim_check_options(struct opt_odb_t *odb, /* options database */
   }
   else if (!mystricmp(pred_type, "agree"))
   {
-    /* AGREE predictor, bpred_create() checks args */
+    /* AGREE: solo se comprueba que lleguen 4 valores; los tamaños
+       e i >= 1 los valida bpred_dir_create() */
     if (agree_nelt != 4)
       fatal("bad AGREE pred config "
             "(<btbbis_size> <pht_size> <gbhr_width> <unused>)");
     if (btb_nelt != 2)
       fatal("bad btb config (<num_sets> <associativity>)");
-    pred = bpred_create(BPredAgree,
-                        /* bimod table size */ 0,
-                        /* 2lev l1 size = BTBbis entries (Y) */
-                        agree_config[0],
-                        /* 2lev l2 size = PHT entries (X) */
-                        agree_config[1],
-                        /* meta table size */ 0,
-                        /* history reg size = GBHR width (g) */
-                        agree_config[2],
-                        /* history xor address */ 0,
-                        /* btb sets */ btb_config[0],
-                        /* btb assoc */ btb_config[1],
-                        /* ret-addr stack size */ ras_size);
+        pred = bpred_create(BPredAgree,
+                            /* sin tabla bimodal */ 0,
+                            /* l1size = entradas del BTBbis (Y) */
+                            agree_config[0],
+                            /* l2size = entradas de la PHT (X) */
+                            agree_config[1],
+                            /* sin meta-predictor */ 0,
+                            /* shift_width = bits del GBHR (g) */
+                            agree_config[2],
+                            /* sin XOR: AGREE concatena */ 0,
+                            /* btb sets */ btb_config[0],
+                            /* btb assoc */ btb_config[1],
+                            /* ret-addr stack size */ ras_size);
   }
   else
     fatal("cannot parse predictor type `%s'", pred_type);

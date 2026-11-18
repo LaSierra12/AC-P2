@@ -104,7 +104,7 @@ bpred_create(enum bpred_class class,     /* type of predictor to create */
 
     break;
 
-  case BPredAgree: /*AGREE tambien se guarda en dirpred.twolev porque reutilizamos la subestructura two*/
+  case BPredAgree: /* AGREE va en dirpred.twolev: reutiliza la subestructura two del 2lev */
     pred->dirpred.twolev =
         bpred_dir_create(class, l1size, l2size, shift_width, xor);
     break;
@@ -128,7 +128,7 @@ bpred_create(enum bpred_class class,     /* type of predictor to create */
   case BPredComb:
   case BPred2Level:
   case BPred2bit:
-  case BPredAgree: /*AGREE también necesita BTB (para la dirección destino) y RAS (para returns), igual que 2lev. El BTBbis es otra cosa, se gestiona dentro de two.btbbis*/
+  case BPredAgree: /* AGREE sigue usando la BTB (destinos) y la RAS (retornos) normales; el BTBbis va aparte, en two.btbbis */
   {
     int i;
 
@@ -249,7 +249,7 @@ bpred_dir_create(
     int i, c;
     unsigned int tmp;
 
-    /* --- Validaciones (igual que 2lev) --- */
+    /* Mismas comprobaciones que el 2lev: tamaños potencia de dos y g entre 1 y 30 */
     if (!l1size || (l1size & (l1size - 1)) != 0)
       fatal("AGREE BTBbis size, `%d', must be non-zero and a power of two",
             l1size);
@@ -265,9 +265,9 @@ bpred_dir_create(
             shift_width);
     pred_dir->config.two.shift_width = shift_width;
 
-    pred_dir->config.two.xor = 0; /* no se usa en AGREE */
+    pred_dir->config.two.xor = 0; /* AGREE concatena, no hace XOR */
 
-    /* --- Calcular c = log2(l2size), i = c - g --- */
+    /* c = log2(X) e i = c - g; i tiene que valer al menos 1 */
     c = 0;
     tmp = l2size;
     while (tmp > 1)
@@ -280,34 +280,34 @@ bpred_dir_create(
       fatal("AGREE: index bits (c - g) = %d must be >= 1 (c=%d, g=%d)",
             c - shift_width, c, shift_width);
 
-    /* --- Reservar BTBbis (array de l1size entradas) --- */
+    /* Reserva del BTBbis: Y = l1size entradas */
     pred_dir->config.two.btbbis =
         calloc(l1size, sizeof(struct bpred_btbbis_ent_t));
     if (!pred_dir->config.two.btbbis)
       fatal("cannot allocate AGREE BTBbis");
 
-    /* Inicializar BTBbis: tag=all-1s, S=1, valid=0, LRU=0 */
+    /* BTBbis vacío al arrancar: valid = 0, S = 1, tag a todo unos y LRU a 0 */
     for (i = 0; i < l1size; i++)
     {
       pred_dir->config.two.btbbis[i].tag = (md_addr_t)-1;
       pred_dir->config.two.btbbis[i].s = 1;
-      pred_dir->config.two.btbbis[i].valid = 0; /* hueco vacío */
+      pred_dir->config.two.btbbis[i].valid = 0; /* hueco libre */
       pred_dir->config.two.btbbis[i].last_used = 0;
     }
 
-    /* --- Reservar PHT (idéntica a 2lev) --- */
+    /* Reserva de la PHT: X = l2size contadores de 2 bits, igual que en 2lev */
     pred_dir->config.two.l2table = calloc(l2size, sizeof(unsigned char));
     if (!pred_dir->config.two.l2table)
       fatal("cannot allocate AGREE PHT");
 
-    /* Inicializar contadores PHT a 3 = 11 = strongly taken */
+    /* Contadores a 3 (11 en binario): la primera predicción siempre es Agree */
     for (i = 0; i < l2size; i++)
       pred_dir->config.two.l2table[i] = 3;
 
-    /* --- GBHR a todo 1s --- */
+    /* GBHR con todos los bits a 1, como pide el enunciado */
     pred_dir->config.two.gbhr = (md_addr_t)-1;
 
-    /* --- Contador LRU a 0 --- */
+    /* Reloj del LRU a 0 */
     pred_dir->config.two.lru_counter = 0;
 
     break;
@@ -624,21 +624,21 @@ bpred_dir_lookup(struct bpred_dir_t *pred_dir, /* branch dir predictor inst */
   }
   break;
   
-  case BPredAgree:  /* el índice de la PHT es la concatenación de los g bits del GBHR y los i bits de la dirección. Es decir: pht_index = (GBHR[g] << i) | ADDR[i]*/
+  case BPredAgree:  /* Índice de la PHT = [GBHR(g) : PC(i)], con el GBHR en la parte alta */
   {
     int i, g, pht_index;
     unsigned int gbhr_bits, addr_bits;
 
-    g = pred_dir->config.two.shift_width; /* g bits del GBHR */
-    i = pred_dir->config.two.index_bits;  /* i bits de la dirección */
+    g = pred_dir->config.two.shift_width; /* g: bits de historia */
+    i = pred_dir->config.two.index_bits;  /* i = c - g: bits del PC */
 
-    /* Bits bajos del GBHR */
+    /* Nos quedamos con los g bits bajos del GBHR */
     gbhr_bits = pred_dir->config.two.gbhr & ((1u << g) - 1);
 
-    /* Bits bajos de la dirección (alineada a palabra) */
+    /* i bits bajos del PC, quitando antes los 2 bits de alineamiento */
     addr_bits = (baddr >> MD_BR_SHIFT) & ((1u << i) - 1);
 
-    /* Concatenación: GBHR en la parte alta, dirección en la baja */
+    /* Concatenación (GBHR << i) | PC; la máscara final es solo por seguridad */
     pht_index = (gbhr_bits << i) | addr_bits;
     pht_index &= (pred_dir->config.two.l2size - 1);
 
@@ -694,7 +694,7 @@ bpred_lookup(struct bpred_t *pred,                  /* branch predictor instance
   dir_update_ptr->pdir2 = NULL;
   dir_update_ptr->pmeta = NULL;
 
-  /*Así, si el branch es un jump (no condicional), estos campos quedan a 0/NULL. Si es condicional y AGREE, el case los rellenará.*/
+  /* Por defecto MISS en el BTBbis; si el salto es condicional y AGREE, el case de abajo los rellena */
   dir_update_ptr->btbbis_hit = 0;
   dir_update_ptr->btbbis_ent = NULL;
 
@@ -734,23 +734,23 @@ bpred_lookup(struct bpred_t *pred,                  /* branch predictor instance
 
   case BPredAgree:
     /*
-      Qué guardamos:
+      Para los saltos condicionales dejamos apuntado en dir_update_ptr:
 
-      pdir1 = puntero a la entrada de la PHT (optimización que pide el enunciado: así bpred_update no recalcula el índice).
+      pdir1      -> contador de la PHT (así bpred_update no recalcula el índice).
 
-      btbbis_hit = 1 si hubo HIT, 0 si MISS.
+      btbbis_hit -> 1 si el salto está en el BTBbis, 0 si no.
 
-      btbbis_ent = puntero a la entrada del BTBbis (si HIT), para actualizar su LRU después.
+      btbbis_ent -> entrada encontrada, para refrescar su LRU en Commit.
     */
     if ((MD_OP_FLAGS(op) & (F_CTRL | F_UNCOND)) != (F_CTRL | F_UNCOND))
     {
       struct bpred_dir_t *two = pred->dirpred.twolev;
       int j;
 
-      /* 1) PHT: obtenemos puntero a la entrada */
+      /* 1) Puntero al contador de la PHT */
       dir_update_ptr->pdir1 = bpred_dir_lookup(two, baddr);
 
-      /* 2) BTBbis: busqueda lineal (completamente asociativa) */
+      /* 2) Búsqueda en el BTBbis: es totalmente asociativo, así que se miran todas las entradas */
       dir_update_ptr->btbbis_hit = 0;
       dir_update_ptr->btbbis_ent = NULL;
       for (j = 0; j < two->config.two.l1size; j++)
@@ -864,8 +864,8 @@ bpred_lookup(struct bpred_t *pred,                  /* branch predictor instance
       int msb = (*dir_update_ptr->pdir1 >= 2) ? 1 : 0;
       int s = dir_update_ptr->btbbis_hit
                   ? dir_update_ptr->btbbis_ent->s
-                  : 1;                 /* default si MISS */
-      pred_taken = (msb == s) ? 1 : 0; /* NXOR */
+                  : 1;                 /* con MISS se toma S = 1 */
+      pred_taken = (msb == s) ? 1 : 0; /* NXOR: Taken si el bit alto de la PHT coincide con S */
     }
     else
     {
@@ -874,11 +874,11 @@ bpred_lookup(struct bpred_t *pred,                  /* branch predictor instance
 
     if (pbtb == NULL)
     {
-      return (pred_taken ? 1 : 0);
+      return (pred_taken ? 1 : 0); /* MISS en la BTB: solo se devuelve la dirección predicha */
     }
     else
     {
-      return (pred_taken ? pbtb->target : 0);
+      return (pred_taken ? pbtb->target : 0); /* HIT en la BTB: destino si se predice Taken */
     }
   }
 
@@ -990,20 +990,20 @@ void bpred_update(struct bpred_t *pred,                  /* branch predictor ins
   }
 #endif /* RAS_BUG_COMPATIBLE */
 
-/* AGREE-specific update: GBHR, BTBbis, PHT */
+/* Actualización de AGREE en Commit, en este orden: PHT -> BTBbis -> GBHR */
 if (pred->class == BPredAgree &&
     (MD_OP_FLAGS(op) & (F_CTRL|F_UNCOND)) != (F_CTRL|F_UNCOND)) {
   struct bpred_dir_t *two = pred->dirpred.twolev;
   int s;
 
-  /* Paso 1: determinar S (BTBbis si HIT, default 1 si MISS) */
+  /* Paso 1: S de la entrada del BTBbis si hubo HIT; si no, S = 1 (igual que al predecir) */
   if (dir_update_ptr->btbbis_hit) {
     s = dir_update_ptr->btbbis_ent->s;
   } else {
     s = 1;
   }
 
-  /* Paso 2: actualizar PHT (coincide con S -> ++, discrepa -> --) */
+  /* Paso 2: PHT. Si el salto coincide con S el contador sube; si no, baja (saturado entre 0 y 3) */
   if (!!taken == s) {
     if (*dir_update_ptr->pdir1 < 3)
       ++*dir_update_ptr->pdir1;
@@ -1012,13 +1012,13 @@ if (pred->class == BPredAgree &&
       --*dir_update_ptr->pdir1;
   }
 
-  /* Paso 3: actualizar BTBbis */
+  /* Paso 3: BTBbis. Solo se inserta si hubo MISS; con HIT solo se refresca el LRU */
   if (!dir_update_ptr->btbbis_hit) {
     struct bpred_btbbis_ent_t *victim = NULL;
     counter_t min_lru;
     int j;
 
-    /* 3a. Buscar hueco libre (valid == 0) */
+    /* 3a. Primero buscamos un hueco libre (valid == 0) */
     for (j = 0; j < two->config.two.l1size; j++) {
       if (two->config.two.btbbis[j].valid == 0) {
         victim = &two->config.two.btbbis[j];
@@ -1026,9 +1026,9 @@ if (pred->class == BPredAgree &&
       }
     }
 
-    /* 3b. Si no hay hueco, evictar el LRU.
-     *     Inicializamos min_lru con el PRIMER elemento (no con (counter_t)-1)
-     *     para evitar problemas con tipos unsigned. */
+    /* 3b. Si está lleno, la víctima es la entrada con menor last_used (LRU).
+     *     Partimos de la primera entrada en vez de usar (counter_t)-1 como
+     *     mínimo inicial, para no tener problemas con el tipo unsigned. */
     if (victim == NULL) {
       victim = &two->config.two.btbbis[0];
       min_lru = two->config.two.btbbis[0].last_used;
@@ -1040,23 +1040,23 @@ if (pred->class == BPredAgree &&
       }
     }
 
-    /* 3c. Comprobación defensiva: si sigue NULL, algo muy raro pasa */
+    /* 3c. Comprobación de seguridad: con l1size >= 1 siempre debería haber víctima */
     if (victim == NULL)
       fatal("AGREE: no victim in BTBbis (l1size=%d, lru_counter=%llu)",
             two->config.two.l1size,
             (unsigned long long)two->config.two.lru_counter);
 
-    /* 3d. Insertar */
+    /* 3d. Insertamos el salto y fijamos S con su resultado real */
     victim->tag       = baddr;
     victim->s         = !!taken;
     victim->valid     = 1;
     victim->last_used = ++two->config.two.lru_counter;
   } else {
-    /* HIT: solo actualizar LRU */
+    /* HIT: el sesgo no cambia, solo se marca como usada recientemente */
     dir_update_ptr->btbbis_ent->last_used = ++two->config.two.lru_counter;
   }
 
-  /* Paso 4: actualizar GBHR (shift + taken en el bit bajo) */
+  /* Paso 4: GBHR. Se desplaza y el resultado real entra por el bit bajo */
   two->config.two.gbhr = (two->config.two.gbhr << 1) | !!taken;
 }
 
@@ -1148,7 +1148,7 @@ if (pred->class == BPredAgree &&
 
   /* update state (but not for jumps) */
     if (dir_update_ptr->pdir1 && pred->class != BPredAgree){
-      /*La actualización genérica incrementa/decrementa según taken. La de AGREE incrementa/decrementa según taken == S. Son distintas. Si dejáramos las dos, el contador se actualizaría dos veces y mal*/
+      /* AGREE ya actualizó su contador arriba (según taken == S). Si pasara también por aquí, se actualizaría dos veces y con el criterio equivocado (según taken) */
       if (taken)
       {
         if (*dir_update_ptr->pdir1 < 3)

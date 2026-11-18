@@ -104,7 +104,7 @@ enum bpred_class {
   BPred2bit,			/* 2-bit saturating cntr pred (dir mapped) */
   BPredTaken,			/* static predict taken */
   BPredNotTaken,		/* static predict not taken */
-  BPredAgree, /*predictor AGREE*/
+  BPredAgree, /* AGREE: PHT de 2 bits + BTBbis con bit de sesgo */
   BPred_NUM
 };
 
@@ -116,13 +116,13 @@ struct bpred_btb_ent_t {
   struct bpred_btb_ent_t *prev, *next; /* lru chaining pointers */
 };
 
-/* entrada al AGREE BTBbis (full asociativo) */
+/* Entrada de la tabla BTBbis de AGREE (tabla totalmente asociativa con reemplazo LRU) */
 struct bpred_btbbis_ent_t
 {
-  md_addr_t tag;   /* tag: dirección de salto (como addr en bpred_btb_ent_t) */
-  unsigned char s; /* bit de comportamiento: 1 = taken, 0 = not taken */
-  unsigned char valid;  /* 1 = la entrada contiene datos reales, 0 = slot vacío */
-  counter_t last_used;  /* timestamp LRU para reemplazar (higher = MRU) */
+  md_addr_t tag;   /* dirección PC de la instrucción de salto */
+  unsigned char s; /* bit de sesgo S: 1 = Taken, 0 = Not Taken (se fija al insertar) */
+  unsigned char valid;  /* 1 = entrada ocupada/válida, 0 = hueco libre (evita falsos HIT al arrancar) */
+  counter_t last_used;  /* marca de tiempo del LRU (mayor = usada más recientemente) */
 };
 
 /* direction predictor def */
@@ -141,11 +141,12 @@ struct bpred_dir_t {
       int *shiftregs;		/* level-1 history table */
       unsigned char *l2table;	/* level-2 prediction state table */
 
-      /* añadimos los campos del AGREE */
-      md_addr_t gbhr; /* Dirección al global branch history register */
-      struct bpred_btbbis_ent_t *btbbis;  /* Tabla de predicción (BTBbis) */
-      int index_bits; /* Número de bits para indexar la tabla BTBbis */
-      counter_t lru_counter;  /* Contador para implementar LRU en BTBbis */
+      /* Campos propios de AGREE. Del 2lev reutilizamos l1size (entradas del
+         BTBbis), l2size y l2table (la PHT) y shift_width (g) */
+      md_addr_t gbhr; /* Registro global de historia, solo se usan los g bits bajos */
+      struct bpred_btbbis_ent_t *btbbis;  /* tabla BTBbis de l1size entradas */
+      int index_bits; /* Bits del PC para indexar la PHT (i = c - g) */
+      counter_t lru_counter;  /* Reloj lógico para gestión de LRU, avanza en cada inserción o HIT */
 
     } two;
   } config;
@@ -202,9 +203,10 @@ struct bpred_update_t {
     unsigned int meta   : 1;    /* meta predictor (0..bimod / 1..2lev) */
   } dir;
 
-    /*adding AGREE filds*/
-  struct bpred_btbbis_ent_t *btbbis_ent;
-  int btbbis_hit; /* 1=hit, 0=miss */
+    /* AGREE: resultado de la búsqueda en el BTBbis, se guarda en Fetch
+       y se reutiliza en Commit sin volver a recorrer la tabla */
+  struct bpred_btbbis_ent_t *btbbis_ent; /* entrada encontrada (NULL si MISS) */
+  int btbbis_hit; /* 1 = HIT, 0 = MISS */
 };
 
 /* create a branch predictor */
